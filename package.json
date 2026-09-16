@@ -1,14 +1,30 @@
 {
-  "urls": [
-    [
-      "template.py",
-      "github:SolderedElectronics/[REPO_NAME]/template.py"
+    "urls": [
+        [
+            "bme690.py",
+            "github:SolderedElectronics/Soldered-BME690-MicroPython-Library/bme690.py"
+        ],
+        [
+            "Examples/bme690-forcedMode.py",
+            "github:SolderedElectronics/Soldered-BME690-MicroPython-Library/Examples/bme690-forcedMode.py"
+        ],
+        [
+            "Examples/bme690-parallelMode.py",
+            "github:SolderedElectronics/Soldered-BME690-MicroPython-Library/Examples/bme690-parallelMode.py"
+        ],
+        [
+            "Examples/bme690-sequentialMode.py",
+            "github:SolderedElectronics/Soldered-BME690-MicroPython-Library/Examples/bme690-sequentialMode.py"
+        ],
+        [
+            "Examples/bme690-selfTest.py",
+            "github:SolderedElectronics/Soldered-BME690-MicroPython-Library/Examples/bme690-selfTest.py"
+        ],
+        [
+            "Examples/bme690-aiStudioLogger.py",
+            "github:SolderedElectronics/Soldered-BME690-MicroPython-Library/Examples/bme690-aiStudioLogger.py"
+        ]
     ],
-    [
-      "Examples/template-example.py",
-      "github:SolderedElectronics/[REPO_NAME]/Examples/template-example.py"
-    ]
-  ],
-  "deps": [],
-  "version": "1.0"
+    "deps": [],
+    "version": "1.0"
 }

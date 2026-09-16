@@ -1,25 +1,33 @@
-# Soldered NAZIV PROIZVODA MicroPython Library
+# Soldered BME690 MicroPython Library
 
-| ![Product name](https://upload.wikimedia.org/wikipedia/commons/8/8f/Example_image.svg) |
-| :------------------------------------------------------------------------------------: |
-|                      [NAZIV PROIZVODA](https://www.solde.red/SKU)                      |
+| ![BME690 breakout board](https://upload.wikimedia.org/wikipedia/commons/8/8f/Example_image.svg) |
+| :--------------------------------------------------------------------------------------------: |
+|                          [BME690 breakout board](https://www.solde.red/SKU)                     |
 
-OPIS PROIZVODA + LINK NA [Qwiic ecosystem](https://soldered.com/collections/qwiic-ecosystem).
+Breakout board for the Bosch BME690 sensor, which measures temperature, relative humidity, barometric pressure and gas resistance (VOC). The board communicates over I2C only and is part of the [Qwiic ecosystem](https://soldered.com/collections/qwiic-ecosystem).
 
-### Using the template
+### Quick start
 
-Before publishing a new library make sure to update:
+```python
+from bme690 import BME690, BME69X_FORCED_MODE
+import time
 
-- `NAZIV PROIZVODA`, `OPIS PROIZVODA`, product image, SKU link, and the "Original source" line in this README
-- if there was no original soruce remove that section
-- update `package.json` with every filename and examples
-- add git tags and update git description
+sensor = BME690()               # Or BME690(address=BME69X_I2C_ADDR_HIGH)
+sensor.set_tph()                # Default over-sampling
+sensor.set_heater_prof(300, 100)  # 300 degrees C for 100 ms
 
-Also make sure to add examples.
+while True:
+    sensor.set_op_mode(BME69X_FORCED_MODE)
+    time.sleep_us(sensor.get_meas_dur())
+    if sensor.fetch_data():
+        data, _ = sensor.get_data()
+        print(data.temperature)
+    time.sleep(1)
+```
 
-**Remove this section of README after everything is done!**
+Have a look at the scripts in `Examples/` for forced, parallel and sequential mode, for the built-in self test and for the BME AI-Studio raw data logger.
 
-For uploading to mim you need to login using the soldered account and submit the repo.
+The driver uses the floating point compensation of the Bosch API. Ports of MicroPython which use single precision floats, the ESP32 among them, are therefore slightly less precise than the Arduino library, well below the accuracy of the sensor itself.
 
 ### How to install
 
@@ -30,23 +38,33 @@ or
 After [**installing the mpremote package**](https://docs.micropython.org/en/latest/reference/mpremote.html), install the library on your board using the following command:
 
 ```sh
-  mpremote mip install github:SolderedElectronics/[REPO_NAME]
+  mpremote mip install github:SolderedElectronics/Soldered-BME690-MicroPython-Library
 ```
 Or, if you're running a Windows OS:
 
 ```sh
-  python -m mpremote mip install github:SolderedElectronics/[REPO_NAME]
+  python -m mpremote mip install github:SolderedElectronics/Soldered-BME690-MicroPython-Library
 ```
 
 ### Repository Contents
 
-- **[nazivproizvoda].py** - MicroPython driver class
+- **bme690.py** - MicroPython driver class, I2C only
 - **package.json** - mip install manifest
-- **/Examples** - examples for using the library
+- **/Examples** - examples for forced, parallel and sequential mode, the built-in self test and the BME AI-Studio raw data logger
+
+### Examples
+
+| Example | What it does |
+| :------ | :----------- |
+| `bme690-forcedMode.py` | One measurement at a time, the usual way to read the sensor |
+| `bme690-sequentialMode.py` | The sensor steps through a heater profile on its own, sleeping in between |
+| `bme690-parallelMode.py` | The gas sensor sweeps a heater profile while TPH is measured continuously |
+| `bme690-selfTest.py` | Runs the built-in self test and prints the unique ID |
+| `bme690-aiStudioLogger.py` | Records a `.bmerawdata` file on an SD card for BME AI-Studio. Needs an ESP32 with WiFi for the NTP synced real time clock and an SD card module on the SPI pins |
 
 ### Hardware design
 
-You can find hardware design for this board in _NAZIV PROIZVODA_ hardware repository.
+You can find hardware design for this board in _BME690 breakout board_ hardware repository.
 
 ### Documentation
 
@@ -64,7 +82,7 @@ At Soldered, we design and manufacture a wide selection of electronic products t
 
 ### Original source
 
-This library is possible thanks to original [[LIBRARY_NAME]]([LIBRARY_LINK]) library. Thank you, [AUTHOR].
+This library is a port of the [Soldered BME690 Arduino library](https://github.com/SolderedElectronics/Soldered-BME690-Arduino-Library), which wraps the [BME69x Sensor API](https://github.com/boschsensortec/BME69x_SensorAPI) by Bosch Sensortec. Thank you, Bosch Sensortec.
 
 ### Open-source license
 
