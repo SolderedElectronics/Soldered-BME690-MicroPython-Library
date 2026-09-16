@@ -2,7 +2,7 @@
 
 | ![BME690 breakout board](https://upload.wikimedia.org/wikipedia/commons/8/8f/Example_image.svg) |
 | :--------------------------------------------------------------------------------------------: |
-|                          [BME690 breakout board](https://www.solde.red/SKU)                     |
+|                          [BME690 breakout board](https://www.solde.red/333411)                     |
 
 Breakout board for the Bosch BME690 sensor, which measures temperature, relative humidity, barometric pressure and gas resistance (VOC). The board communicates over I2C only and is part of the [Qwiic ecosystem](https://soldered.com/collections/qwiic-ecosystem).
 
@@ -60,7 +60,7 @@ Or, if you're running a Windows OS:
 | `bme690-sequentialMode.py` | The sensor steps through a heater profile on its own, sleeping in between |
 | `bme690-parallelMode.py` | The gas sensor sweeps a heater profile while TPH is measured continuously |
 | `bme690-selfTest.py` | Runs the built-in self test and prints the unique ID |
-| `bme690-aiStudioLogger.py` | Records a `.bmerawdata` file on an SD card for BME AI-Studio. Needs an ESP32 with WiFi for the NTP synced real time clock and an SD card module on the SPI pins |
+| `bme690-aiStudioLogger.py` | Records a `.bmerawdata` file on an SD card for BME AI-Studio. Needs an ESP32 with WiFi for the NTP synced real time clock, an SD card module on the SPI pins and the `sdcard` driver of micropython-lib, which `mip` installs along with this library |
 
 ### Hardware design
 

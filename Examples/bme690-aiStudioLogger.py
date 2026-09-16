@@ -3,7 +3,7 @@
 # BRIEF: Record BME690 raw data into a .bmerawdata file on an SD card, in the
 #        Bosch BME AI-Studio Raw Data Format, so that it can be imported into
 #        BME AI-Studio and used to train a gas classification algorithm
-# WORKS WITH: BME690 breakout board: solde.red/SKU
+# WORKS WITH: BME690 breakout board: solde.red/333411
 # LAST UPDATED: 2026-09-16
 #
 # The example runs the sensor in parallel mode with a ten step heater profile,
@@ -23,6 +23,10 @@
 # - a BME690 breakout on the I2C pins, or connected via Qwiic
 # - an SD card module on the SPI pins, chip select on SD_CS
 #
+# Needed libraries:
+# - sdcard, the SD card driver of micropython-lib, installed with
+#   mpremote mip install sdcard
+#
 # The AI-Studio workflow is described here:
 # https://www.bosch-sensortec.com/software/bme/docs/overview/getting-started.html
 
@@ -35,23 +39,31 @@ from bme690 import (
     BME69X_PARALLEL_MODE,
     BME69X_WARNING,
 )
-from machine import Pin, SDCard
+from machine import Pin, SPI
 import json
 import network
 import ntptime
 import os
 import random
+import sdcard
 import time
 
 # WiFi credentials, only used to get the current time over NTP.
 SSID = "YOUR_SSID_HERE"
 PASSWORD = "YOUR_PASSWORD_HERE"
 
-# Pins of the SD card module, wired to the SPI bus.
+# SPI bus and pins of the SD card module. The pins below are the native VSPI
+# pins of the ESP32.
+SD_SPI_ID = 2
 SD_SCK = 18
 SD_MISO = 19
 SD_MOSI = 23
 SD_CS = 5
+
+# Bus speed used while the card is initialized, and afterwards. The card only
+# answers slowly until it is out of its initialization sequence.
+SD_INIT_BAUDRATE = 400000
+SD_BAUDRATE = 20000000
 
 # Button which marks the start of a new Specimen while recording. It is
 # active low, so the internal pull up is enough. Set it to None to record the
@@ -201,14 +213,32 @@ def sync_time():
 
 
 def mount_sd():
-    """Mount the SD card on /sd."""
-    card = SDCard(
-        slot=3, sck=SD_SCK, miso=SD_MISO, mosi=SD_MOSI, cs=SD_CS
+    """
+    Mount the SD card on /sd.
+
+    A soft reset leaves an earlier mount in place, so mounting again would
+    fail with EBUSY. The old mount is therefore dropped first, which does
+    nothing when there is none.
+    """
+    try:
+        os.umount("/sd")
+    except OSError:
+        pass
+
+    spi = SPI(
+        SD_SPI_ID,
+        baudrate=SD_INIT_BAUDRATE,
+        sck=Pin(SD_SCK),
+        mosi=Pin(SD_MOSI),
+        miso=Pin(SD_MISO),
     )
+    card = sdcard.SDCard(spi, Pin(SD_CS))
+    spi.init(baudrate=SD_BAUDRATE)
+
     os.mount(card, "/sd")
     print("SD card ready")
 
-    return card
+    return spi
 
 
 def build_header(now, seed_power_on_off):
@@ -412,7 +442,7 @@ button = None
 if LABEL_BUTTON_PIN is not None:
     button = Pin(LABEL_BUTTON_PIN, Pin.IN, Pin.PULL_UP)
 
-card = mount_sd()
+spi = mount_sd()
 
 sensor = BME690()
 check_sensor_status(sensor)
@@ -457,7 +487,7 @@ file.write("]}}")
 file.close()
 
 os.umount("/sd")
-card.deinit()
+spi.deinit()
 station.disconnect()
 
 print(

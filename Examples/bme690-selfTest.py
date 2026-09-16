@@ -1,7 +1,7 @@
 # FILE: bme690-selfTest.py
 # AUTHOR: Josip Simun Kuci @ Soldered
 # BRIEF: Run the built-in self test of the BME690 and print the result
-# WORKS WITH: BME690 breakout board: solde.red/SKU
+# WORKS WITH: BME690 breakout board: solde.red/333411
 # LAST UPDATED: 2026-09-16
 
 from bme690 import BME690, BME69X_OK

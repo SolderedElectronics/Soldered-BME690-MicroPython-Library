@@ -2,7 +2,7 @@
 # AUTHOR: Josip Simun Kuci @ Soldered
 # BRIEF: Read temperature, pressure, humidity and gas resistance from the
 #        BME690 in forced mode, one measurement at a time
-# WORKS WITH: BME690 breakout board: solde.red/SKU
+# WORKS WITH: BME690 breakout board: solde.red/333411
 # LAST UPDATED: 2026-09-16
 
 from bme690 import (

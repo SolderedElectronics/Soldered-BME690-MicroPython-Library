@@ -3,7 +3,7 @@
 # BRIEF: Run the BME690 in parallel mode, where the gas sensor sweeps through
 #        a heater profile while temperature, pressure and humidity are
 #        measured continuously
-# WORKS WITH: BME690 breakout board: solde.red/SKU
+# WORKS WITH: BME690 breakout board: solde.red/333411
 # LAST UPDATED: 2026-09-16
 
 from bme690 import (

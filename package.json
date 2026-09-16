@@ -25,6 +25,11 @@
             "github:SolderedElectronics/Soldered-BME690-MicroPython-Library/Examples/bme690-aiStudioLogger.py"
         ]
     ],
-    "deps": [],
+    "deps": [
+        [
+            "sdcard",
+            "latest"
+        ]
+    ],
     "version": "1.0"
 }
