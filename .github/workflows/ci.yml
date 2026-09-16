@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  syntax-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Compile all .py files
+        run: python3 -m py_compile $(find . -name '*.py' -not -path './.git/*')
+
+  validate-package-json:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Validate package.json is well-formed and files it references exist
+        run: |
+          python3 - <<'EOF'
+          import json
+          import sys
+          from pathlib import Path
+
+          repo = Path(".")
+          manifest = json.loads((repo / "package.json").read_text())
+
+          missing = []
+          for dest, src in manifest.get("urls", []):
+              if src.startswith("github:"):
+                  # github:org/repo/path/to/file — check the path portion exists in this checkout
+                  parts = src[len("github:"):].split("/", 2)
+                  if len(parts) == 3:
+                      rel_path = parts[2]
+                      if not (repo / rel_path).is_file():
+                          missing.append(rel_path)
+
+          if missing:
+              print("Missing files referenced by package.json:", missing)
+              sys.exit(1)
+
+          print("package.json OK —", len(manifest.get("urls", [])), "file(s) referenced, all present")
+          EOF
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Install mpy-cross
+        run: pip install mpy-cross
+      - name: Cross-compile all .py files to .mpy bytecode
+        run: |
+          find . -name '*.py' -not -path './.git/*' -print0 | xargs -0 -n1 mpy-cross

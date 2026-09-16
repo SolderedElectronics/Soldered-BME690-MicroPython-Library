@@ -1,0 +1,14 @@
+{
+  "urls": [
+    [
+      "template.py",
+      "github:SolderedElectronics/[REPO_NAME]/template.py"
+    ],
+    [
+      "Examples/template-example.py",
+      "github:SolderedElectronics/[REPO_NAME]/Examples/template-example.py"
+    ]
+  ],
+  "deps": [],
+  "version": "1.0"
+}
